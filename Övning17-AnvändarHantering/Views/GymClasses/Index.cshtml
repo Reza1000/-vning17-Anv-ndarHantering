@@ -1,0 +1,111 @@
+﻿@using Microsoft.AspNet.Identity
+@model IEnumerable<Övning17_AnvändarHantering.Models.GymClass>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+
+
+<p>
+    @if (User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Create New", "Create")
+    }
+</p>
+
+
+@if (User.Identity.IsAuthenticated)
+{
+    <p>User: <b>@User.Identity.GetUserName()</b></p>
+
+    <p style="display: inline;">Role: </p>
+    <ul style="display: inline; margin-left: -40px">
+
+        @if (User.IsInRole("Admin"))
+        {
+            <p style="display: inline;"><b>Admin</b></p>}
+        <br />
+
+    </ul>
+
+}
+else
+{
+    <p>Not logged in</p>
+}
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StartTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Duration)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Duration)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    @Html.ActionLink("Details", "Details", new { id = item.Id })
+                    <span> | </span>
+
+
+                    var x = User.Identity.GetUserId();
+                    if (item.AttendingMemebers.SingleOrDefault(m => m.Id == x) != null)
+                    {
+                        @Html.ActionLink("UnBook", "BookningToggle", new { id = item.Id })
+
+
+                    }
+
+                    else
+                    {
+                        @Html.ActionLink("Book", "BookningToggle", new { id = item.Id })
+                    }
+
+
+                    if (User.IsInRole("Admin"))
+                    {
+                        <span> | </span>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+                        <span> | </span>
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    }
+
+
+
+                }
+
+            </td>
+
+        </tr>
+    }
+
+
+</table>
